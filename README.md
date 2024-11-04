@@ -1,5 +1,6 @@
 prairielandelec (Mac) had  done some digging to figure out the undocumented API for KC's Streetcar here:
 https://github.com/prairielandelec/KC-Streetcar-API
+![StreetcarArrivalsESP32](https://github.com/user-attachments/assets/d3af7765-e293-4915-8e55-fb949c1e9d31)
 
 This project implements the concept in Arduino-ESP32.  
 As of the initial commmit, several of the time constructs aren't yet implemented.  
