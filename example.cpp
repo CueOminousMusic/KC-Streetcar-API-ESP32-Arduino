@@ -5,8 +5,8 @@
 
 //Define Variables
 //WiFi Setup
-const char* ssid = "***REMOVED***";          // Your WiFi SSID
-const char* password = "***REMOVED***";  // Your WiFi Password
+const char* ssid = "";          // Your WiFi SSID
+const char* password = "";  // Your WiFi Password
 
 //useful screen math
 int centerX = SCREEN_WIDTH / 2;
