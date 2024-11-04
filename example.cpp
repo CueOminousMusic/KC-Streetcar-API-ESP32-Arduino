@@ -1,22 +1,17 @@
-#include <Arduino.h>
-#include <WiFi.h>
-#include <WiFiClientSecure.h>
-#include <HTTPClient.h>
-#include <ArduinoJson.h> //https://arduinojson.org
 #include "touchscreenConfig.h" //https://github.com/RuiSantosdotme/ESP32-TFT-Touchscreen
-
 #include "KCSCApi.h"
-#include "citypostCert.h"
+
 
 
 //Define Variables
 //WiFi Setup
-const char* ssid = "";          // Your WiFi SSID
-const char* password = "";  // Your WiFi Password
+const char* ssid = "***REMOVED***";          // Your WiFi SSID
+const char* password = "***REMOVED***";  // Your WiFi Password
 
 //useful screen math
 int centerX = SCREEN_WIDTH / 2;
 int centerY = SCREEN_HEIGHT / 2;
+
 
 
 // put function declarations here:
@@ -56,9 +51,13 @@ void setup() {
   tft.fillScreen(TFT_WHITE);
   tft.setTextColor(TFT_BLACK, TFT_WHITE);
 
-  tft.drawCentreString("Kansas City Streetcar Arrivals", centerX, 30, FONT_SIZE);
-  //tft.drawCentreString("Touch screen to test", centerX, centerY, FONT_SIZE);
-  //END TOUCHSCREEN
+  tft.drawCentreString("Kansas City Streetcar Arrivals", centerX, 15, FONT_SIZE*1.6);
+
+  //END TOUCHSCREEN SECTION
+
+  //time
+  waitForSync();
+
 
   delay(10000);  //This is only here to avoid calling the API if the unit restarts quickly
 }
@@ -67,17 +66,36 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   int rc = getNow(apistruct);
+
+  //Print some results to serial
   Serial.print("Station: ");
   Serial.println(apistruct.stopName);
   Serial.print("Next Train arriving in: ");
   Serial.print(apistruct.nextMin);
   Serial.println(" minutes");
 
-//  String StationID = "Station: " + String(apistruct.stopName);
-  tft.drawCentreString(apistruct.stopName, centerX, 60, FONT_SIZE);
+  Serial.print("Subsequent Train arriving in: ");
+  Serial.print(apistruct.secondMin);
+  Serial.println(" minutes");
 
-  String Arrival = "Next Train: " + String(apistruct.nextMin) + " minutes";
-  tft.drawCentreString(Arrival, centerX, 90, FONT_SIZE);
+
+  //begin writing results to screen
+  // Clear the screen before writing to it
+  tft.fillScreen(TFT_WHITE);
+  tft.setTextColor(TFT_BLACK, TFT_WHITE);
+  //Title Block
+  tft.drawCentreString("KC Streetcar Arrivals", centerX, 15, FONT_SIZE*2);
+  //Station Name
+  tft.drawCentreString(apistruct.stopName, centerX, 45, FONT_SIZE*1.4);
+  //in initial demo, FONT_SIZE = 2 - we're making it just a scoach bigger; 
+  tft.drawString("Trains arriving in: ", 45, 80, FONT_SIZE);
+
+  String Arrival = String(apistruct.nextMin) + " minutes"; //this is done on a seperate line to remove ambiguity of String conversion method
+  tft.drawString(Arrival, 45, 110, FONT_SIZE*2);
+  tft.drawString(apistruct.nextTime12, 190, 110, FONT_SIZE*2);
+  String Arrival2 = String(apistruct.secondMin) + " minutes";
+  tft.drawString(Arrival2, 45, 150, FONT_SIZE*2);
+  tft.drawString(apistruct.secondTime12, 190, 150, FONT_SIZE*2);
 
   // Checks if Touchscreen was touched, and prints X, Y and Pressure (Z) info on the TFT display and Serial Monitor
   if (touchscreen.tirqTouched() && touchscreen.touched()) {
